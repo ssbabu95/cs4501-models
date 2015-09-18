@@ -22,6 +22,7 @@ SECRET_KEY = 'um3($#+9@wwl1qqj4s39$+5opy1le*9h)$wggvi+s(i7+i9rq9'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+TEMPLATE_DIRS = (os.path.join(BASE_DIR, 'cs4501/templates'),)
 TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = []
@@ -36,6 +37,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'cs4501',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -47,6 +49,9 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
+
+APPEND_SLASH = True
+PREPEND_WWW = False
 
 ROOT_URLCONF = 'cs4501.urls'
 
