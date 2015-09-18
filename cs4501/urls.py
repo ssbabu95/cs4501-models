@@ -11,7 +11,7 @@ urlpatterns = patterns('',
 
     urls(r'^api/v1/listing/create$', main.create_listing)
     urls(r'^api/v1/listing/(\d+)$', main.lookup_listing)
-    urls(r'^api/v1/users/(\d+)/update$', main.update_listing)
-    urls(r'^api/v1/users/(\d+)/buy$', main.buy_listing)
+    urls(r'^api/v1/listing/(\d+)/update$', main.update_listing)
+    urls(r'^api/v1/listing/(\d+)/buy$', main.buy_listing)
     url(r'^admin/', include(admin.site.urls)),
 )
