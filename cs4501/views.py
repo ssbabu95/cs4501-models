@@ -49,4 +49,13 @@ def user_login(request):
 @login_required
 def user_logout(request):
 	logout(request)
-	return HttpResponse("Logged out") 
+	return HttpResponse("Logged out")
+
+def _error_response(request, error_msg):
+	return JsonResponse({'ok': False, 'error': error_msg})
+
+def _success_response(request, resp=None):
+	if resp:
+		return JsonResponse({'ok': True, 'resp': resp})
+	else:
+		return JsonResponse({'ok': True}) 
