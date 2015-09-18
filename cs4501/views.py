@@ -3,6 +3,9 @@ import datetime
 from django.http import JsonReponse
 from django.contrib.auth import hashers
 from django import db
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
 
 from cs4501 import models
 
@@ -22,7 +25,8 @@ def create_user(request):
 		password = hashers.makepassword(request.POST['password']),
 		username = request.POST['username'],
 		type_of_user = request.POST['type_of_user'],
-		date_joined = datetime.datetime.now()
+		date_joined = datetime.datetime.now(),
+		is_active = True
 	)
 	try:
 		user.save()
