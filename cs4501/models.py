@@ -25,4 +25,3 @@ class Listing(models.Model):
 	creator = models.ForeinKey('User')
 	date_listed = models.DateTimeField()
 	available = models.BooleanField()
-	
