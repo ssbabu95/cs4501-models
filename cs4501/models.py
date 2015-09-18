@@ -16,8 +16,8 @@ class User(models.Model):
 	password = models.CharField(max_length=16)
 	is_active = models.BooleanField()
 	type_of_user = modelsCharField(max_length=16, choices=Type_Of_User_list, default=General)
-	type_of_instrument=models.CharField(max_length=16)
 	listings = models.OneToManyField(Listing)
+	type_of_instrument = models.CharField(max_length=16, null=True, blank=True)
 
 class Listing(models.Model):
 	title = models.Charfield(max_length=16)

@@ -1,8 +1,11 @@
 import datetime
 
-from django.http import JsonResponse
+from django.http import JsonReponse
 from django.contrib.auth import hashers
 from django import db
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
 
 from stuff import models
 
@@ -10,32 +13,60 @@ from stuff import models
 
 def create_user(request):
     if request.method != 'POST':
-        return _error_response(request, "must make POST request")
-    if 'first_name' not in request.POST or    \
-       'last_name' not in request.POST or     \
-       'password' not in request.POST or      \
-       'username' not in request.POST or      \
-	   'type_of_user' not in request.POST or  \
-       'type_of_instrument' not in request.POST or \
-       'listings' not in request.POST:
-            return _error_response(request, "missing required fields")
+        return _error_response(request, "Must make a POST request")
+    if 'first_name' not in request.POST or 
+       'last_name' not in request.POST or
+       'password' not in request.POST or
+       'username' not in request.POST or
+       'type_of_user' not in request.POST or:
+       return _error_response(request, "Missing required fields")
 
-    u = models.User(username=request.POST['username'],                         \
-                    first_name=request.POST['first_name'],                             \
-                    last_name=request.POST['last_name'], 					           \
-					type_of_user=request.POST['type_of_user'],
-                    password=hashers.make_password(request.POST['password']),  \
-                    type_of_instrument=request.POST['type_of_instrument'],  \
-                    is_active=False,                                           \
-                    date_joined=datetime.datetime.now()                        \
-                    )
-
+    user = models.User(username=request.POST['username'],
+        first_name = request.POST['first_name'],
+        last_name = request.POST['last_name'],
+        password = hashers.makepassword(request.POST['password']),
+        username = request.POST['username'],
+        type_of_user = request.POST['type_of_user'],
+        date_joined = datetime.datetime.now(),
+        is_active = True,
+    )
     try:
-        u.save()
+        user.save()
     except db.Error:
-        return _error_response(request, "db error")
+        return _error_response(request, "DB error")
+    return _success_response(request, {'user_id': user.pk})
 
-    return _success_response(request, {'user_id': u.pk})
+def user_login(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(username=username, password=password)
+        if user:
+            if user.is_active:
+                login(request, user)
+                return HttpResponse("Login successful")
+            else:
+                return HttpResponse("Login failed")
+        else:
+            return HttpResponse("Wrong username or password")
+    else:
+        return _error_response(request, "Must make a POST request")
+
+
+
+@login_required
+def user_logout(request):
+    logout(request)
+    return HttpResponse("Logged out")
+
+def _error_response(request, error_msg):
+    return JsonResponse({'ok': False, 'error': error_msg})
+
+def _success_response(request, resp=None):
+    if resp:
+        return JsonResponse({'ok': True, 'resp': resp})
+    else:
+        return JsonResponse({'ok': True}) 
 
 def lookup_user(request, user_id):
     if request.method != 'GET':
@@ -44,7 +75,7 @@ def lookup_user(request, user_id):
     try:
         u = models.User.objects.get(pk=user_id)
     except models.User.DoesNotExist:
-        return _error_response(request, "user not found")
+        return _error_response(request, "User not found")
 
     return _success_response(request, {'username': u.username,      \
                                        'first_name': u.f_name,          \
@@ -53,6 +84,7 @@ def lookup_user(request, user_id):
                                        'is_active': u.is_active,    \
                                        'type_of_instrument': u.type_of_instrument, \
                                        'date_joined': u.date_joined \
+                                       'listings': u.listings
                                        })
 
 def update_user(request, user_id):
@@ -80,9 +112,11 @@ def update_user(request, user_id):
     if 'is_active' in request.POST:
         u.is_active = request.POST['is_active']
         changed = True
-
     if 'type_of_instrument' in request.POST:
         u.is_active = request.POST['type_of_instrument']
+        changed = True
+    if 'listings' in request.POST:
+        u.is_active = request.POST['listings']
         changed = True
 
     if not changed:
@@ -119,12 +153,12 @@ def create_listing(request):
 
 def lookup_listing(request, listing_id):
     if request.method != 'GET':
-        return _error_response(request, "must make GET request")
+        return _error_response(request, "Must make GET request")
 
     try:
         l = models.Listing.objects.get(pk=listing_id)
     except models.User.DoesNotExist:
-        return _error_response(request, "user not found")
+        return _error_response(request, "Listing not found")
 
     return _success_response(request, {'title': l.username,      \
                                        'description': l.f_name,          \
@@ -135,12 +169,12 @@ def lookup_listing(request, listing_id):
 
 def update_listing(request, user_id):
     if request.method != 'POST':
-        return _error_response(request, "must make POST request")
+        return _error_response(request, "Must make POST request")
 
     try:
         u = models.User.objects.get(pk=user_id)
     except models.User.DoesNotExist:
-        return _error_response(request, "user not found")
+        return _error_response(request, "Listing not found")
 
     changed = False
     if 'title' in request.POST:
@@ -157,7 +191,7 @@ def update_listing(request, user_id):
         changed = True
 
     if not changed:
-        return _error_response(request, "no fields updated")
+        return _error_response(request, "No fields updated")
 
     u.save()
 
@@ -165,63 +199,19 @@ def update_listing(request, user_id):
 
 ############################################################################################################################################
 
-def leave_thing(request):
-    if request.method != 'POST':
-        return _error_response(request, "must make POST request")
-    if 'title' not in request.POST or      \
-       'giver_id' not in request.POST or   \
-       'location' not in request.POST:
-        return _error_response(request, "missing required fields")
-
-    try:
-        giver = models.User.objects.get(pk=request.POST['giver_id'])
-    except models.User.DoesNotExist:
-        return _error_response(request, "giver not found")
-    
-    t = models.Thing(title=request.POST['title'],                       \
-                     description = request.POST.get('description', ''), \
-                     giver=giver,                                       \
-                     location=request.POST['location'],                 \
-                     date_given=datetime.datetime.now(),                \
-                     was_taken=False                                    \
-                     )
-    try:
-        t.save()
-    except db.Error:
-        return _error_response(request, "db error")
-
-    return _success_response(request, {'thing_id': t.pk})
-                     
-def lookup_thing(request, thing_id):
-    if request.method != 'GET':
-        return _error_response(request, "must make GET request")
-    
-    try:
-        t = models.Thing.objects.get(pk=thing_id)
-    except models.Thing.DoesNotExist:
-        return _error_response(request, "thing not found")
-
-    return _success_response(request, {'title': t.title,             \
-                                       'description': t.description, \
-                                       'giver_id': t.giver_id,       \
-                                       'location': t.location,       \
-                                       'date_given': t.date_given,   \
-                                       'was_taken': t.was_taken,     \
-                                       })
-
-def take_thing(request, thing_id):
+def buy_listing(request, listing_id):
     if request.method != 'POST':
         return _error_response(request, "must make POST request")
 
     try:
-        t = models.Thing.objects.get(pk=thing_id)
-    except models.Thing.DoesNotExist:
-        return _error_response(request, "thing not found")
+        t = models.Listing.objects.get(pk=listing_id)
+    except models.Listing.DoesNotExist:
+        return _error_response(request, "Listing not found")
 
-    if t.was_taken:
-        return _error_response(request, "thing already taken")
+    if !t.available:
+        return _error_response(request, "Listing not available")
 
-    t.was_taken = True
+    t.available = False
 
     try:
         t.save()
@@ -229,12 +219,3 @@ def take_thing(request, thing_id):
         return _error_response(request, "db error")
 
     return _success_response(request)
-
-def _error_response(request, error_msg):
-    return JsonResponse({'ok': False, 'error': error_msg})
-
-def _success_response(request, resp=None):
-    if resp:
-        return JsonResponse({'ok': True, 'resp': resp})
-    else:
-        return JsonResponse({'ok': True})
