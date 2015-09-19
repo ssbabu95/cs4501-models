@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.exceptions import ValidationError
 
 class User(models.Model):
 	Artist = 'artist'
@@ -25,3 +26,9 @@ class Listing(models.Model):
 	creator = models.ForeinKey('User')
 	date_listed = models.DateTimeField()
 	available = models.BooleanField()
+
+class Reviews(models.Model):
+	title = models.CharField(max_length = 40))
+	body models.CharField(max_length = 250))
+	review_rating = models.IntegerField(validators=[MinValueValidator(0),MaxValueValidator(5)]
+	
