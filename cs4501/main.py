@@ -255,14 +255,14 @@ def update_review(request, review_id):
     if 'title' in request.POST:
         u.title = request.POST['title']
         changed = True
-    if 'description' in request.POST:
-        u.description = request.POST['description']
+    if 'body' in request.POST:
+        u.body = request.POST['body']
         changed = True
-    if 'creator' in request.POST:
-        u.creator = request.POST['creator']
+    if 'reviewer' in request.POST:
+        u.reviewer = request.POST['reviewer']
         changed = True
-    if 'available' in request.POST:
-        u.available = request.POST['available']
+    if 'review_rating' in request.POST:
+        u.review_rating = request.POST['review_rating']
         changed = True
 
     if not changed:
