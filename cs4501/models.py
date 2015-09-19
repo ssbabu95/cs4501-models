@@ -19,6 +19,7 @@ class User(models.Model):
 	type_of_user = modelsCharField(max_length=16, choices=Type_Of_User_list, default=General)
 	listings = models.OneToManyField(Listing)
 	type_of_instrument = models.CharField(max_length=16, null=True, blank=True)
+	reviews = models.OneToManyField(Review)
 
 class Listing(models.Model):
 	title = models.Charfield(max_length=16)
@@ -27,8 +28,9 @@ class Listing(models.Model):
 	date_listed = models.DateTimeField()
 	available = models.BooleanField()
 
-class Reviews(models.Model):
+class Review(models.Model):
 	title = models.CharField(max_length = 40))
-	body models.CharField(max_length = 250))
-	review_rating = models.IntegerField(validators=[MinValueValidator(0),MaxValueValidator(5)]
+	body = models.CharField(max_length = 250))
+	review_rating = models.IntegerField(validators=[MinValueValidator(0),MaxValueValidator(5)])
+	reviewer = models.ForeignKey(User)
 	
