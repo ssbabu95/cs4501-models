@@ -13,5 +13,8 @@ urlpatterns = patterns('',
     urls(r'^api/v1/listing/(\d+)$', main.lookup_listing)
     urls(r'^api/v1/listing/(\d+)/update$', main.update_listing)
     urls(r'^api/v1/listing/(\d+)/buy$', main.buy_listing)
+
+    urls(r'^api/v1/review/create$', main.create_review)
+    urls(r'^api/v1/review/(\d+)/update$', main.update_review)
     url(r'^admin/', include(admin.site.urls)),
 )
