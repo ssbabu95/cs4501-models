@@ -248,21 +248,21 @@ def update_review(request, review_id):
 
     try:
         r = models.Review.objects.get(pk=user_id)
-    except models.User.DoesNotExist:
+    except models.Review.DoesNotExist:
         return _error_response(request, "Listing not found")
 
     changed = False
     if 'title' in request.POST:
-        u.f_name = request.POST['title']
+        u.title = request.POST['title']
         changed = True
     if 'description' in request.POST:
-        u.l_name = request.POST['description']
+        u.description = request.POST['description']
         changed = True
     if 'creator' in request.POST:
-        u.password = hashers.make_password(request.POST['creator'])
+        u.creator = request.POST['creator']
         changed = True
     if 'available' in request.POST:
-        u.is_active = request.POST['available']
+        u.available = request.POST['available']
         changed = True
 
     if not changed:
