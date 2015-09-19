@@ -167,7 +167,7 @@ def lookup_listing(request, listing_id):
                                        'date_listed': l.date_joined \
                                        })
 
-def update_listing(request, user_id):
+def update_listing(request, listing_id):
     if request.method != 'POST':
         return _error_response(request, "Must make POST request")
 
@@ -219,3 +219,25 @@ def buy_listing(request, listing_id):
         return _error_response(request, "db error")
 
     return _success_response(request)
+
+def create_review(request):
+    if request.method != 'POST':
+        return _error_response(request, "must make POST request")
+    if 'title' not in request.POST or     
+       'body' not in request.POST or     
+       'review_rating' not in request.POST or   
+       'reviewer' not in request.POST:
+        return _error_response(request, "missing required fields")
+
+    r = models.Review(title=request.POST['title'],                         
+                    body=request.POST['body'],                             
+                    review_rating=request.POST['review_rating'],                             
+                    reviewer=request.POST['reviewer']
+                    )
+
+    try:
+        r.save()
+    except db.Error:
+        return _error_response(request, "db error")
+
+    return _success_response(request, {'review_id': r.pk})
