@@ -77,14 +77,15 @@ def lookup_user(request, user_id):
     except models.User.DoesNotExist:
         return _error_response(request, "User not found")
 
-    return _success_response(request, {'username': u.username,      \
-                                       'first_name': u.f_name,          \
-                                       'last_name': u.l_name,          \
-									   'type_of_user': u.user_type, \
-                                       'is_active': u.is_active,    \
-                                       'type_of_instrument': u.type_of_instrument, \
-                                       'date_joined': u.date_joined \
+    return _success_response(request, {'username': u.username,      
+                                       'first_name': u.f_name,          
+                                       'last_name': u.l_name,          
+									   'type_of_user': u.user_type, 
+                                       'is_active': u.is_active,    
+                                       'type_of_instrument': u.type_of_instrument, 
+                                       'date_joined': u.date_joined 
                                        'listings': u.listings
+                                       'reviews': u.reviews
                                        })
 
 def update_user(request, user_id):
@@ -157,14 +158,14 @@ def lookup_listing(request, listing_id):
 
     try:
         l = models.Listing.objects.get(pk=listing_id)
-    except models.User.DoesNotExist:
+    except models.Listing.DoesNotExist:
         return _error_response(request, "Listing not found")
 
-    return _success_response(request, {'title': l.username,      \
-                                       'description': l.f_name,          \
-                                       'creator': l.l_name,          \
-                                       'available': l.is_active,    \
-                                       'date_listed': l.date_joined \
+    return _success_response(request, {'title': l.title,      
+                                       'description': l.description,          
+                                       'creator': l.creator,          
+                                       'available': l.available,    
+                                       'date_listed': l.date_listed 
                                        })
 
 def update_listing(request, listing_id):
@@ -172,22 +173,22 @@ def update_listing(request, listing_id):
         return _error_response(request, "Must make POST request")
 
     try:
-        u = models.User.objects.get(pk=user_id)
-    except models.User.DoesNotExist:
+        u = models.Listing.objects.get(pk=listing_id)
+    except models.Listing.DoesNotExist:
         return _error_response(request, "Listing not found")
 
     changed = False
     if 'title' in request.POST:
-        u.f_name = request.POST['title']
+        u.title = request.POST['title']
         changed = True
     if 'description' in request.POST:
-        u.l_name = request.POST['description']
+        u.description = request.POST['description']
         changed = True
     if 'creator' in request.POST:
-        u.password = hashers.make_password(request.POST['creator'])
+        u.creator = request.POST['creator']
         changed = True
     if 'available' in request.POST:
-        u.is_active = request.POST['available']
+        u.available = request.POST['available']
         changed = True
 
     if not changed:
@@ -197,7 +198,6 @@ def update_listing(request, listing_id):
 
     return _success_response(request)
 
-############################################################################################################################################
 
 def buy_listing(request, listing_id):
     if request.method != 'POST':
@@ -241,3 +241,33 @@ def create_review(request):
         return _error_response(request, "db error")
 
     return _success_response(request, {'review_id': r.pk})
+
+def update_review(request, review_id):
+    if request.method != 'POST':
+        return _error_response(request, "Must make POST request")
+
+    try:
+        r = models.Review.objects.get(pk=user_id)
+    except models.User.DoesNotExist:
+        return _error_response(request, "Listing not found")
+
+    changed = False
+    if 'title' in request.POST:
+        u.f_name = request.POST['title']
+        changed = True
+    if 'description' in request.POST:
+        u.l_name = request.POST['description']
+        changed = True
+    if 'creator' in request.POST:
+        u.password = hashers.make_password(request.POST['creator'])
+        changed = True
+    if 'available' in request.POST:
+        u.is_active = request.POST['available']
+        changed = True
+
+    if not changed:
+        return _error_response(request, "No fields updated")
+
+    u.save()
+
+    return _success_response(request)
