@@ -14,21 +14,21 @@ from cs4501 import models
 def create_user(request):
     if request.method != 'POST':
         return _error_response(request, "Must make a POST request")
-    if 'first_name' not in request.POST or 
-       'last_name' not in request.POST or
-       'password' not in request.POST or
-       'username' not in request.POST or
-       'type_of_user' not in request.POST or:
+    if 'first_name' not in request.POST or    \
+       'last_name' not in request.POST or     \
+       'password' not in request.POST or      \
+       'username' not in request.POST or      \
+       'type_of_user' not in request.POST:
        return _error_response(request, "Missing required fields")
 
     user = models.User(
-        username=request.POST['username'],
-        first_name = request.POST['first_name'],
-        last_name = request.POST['last_name'],
-        password = hashers.makepassword(request.POST['password']),
-        type_of_user = request.POST['type_of_user'],
-        date_joined = datetime.datetime.now(),
-        is_active = True,
+        username=request.POST['username'],                         \
+        first_name = request.POST['first_name'],                   \
+        last_name = request.POST['last_name'],                     \
+        password = hashers.makepassword(request.POST['password']), \
+        type_of_user = request.POST['type_of_user'],               \
+        date_joined = datetime.datetime.now(),                     \
+        is_active = True,                                          \
     )
     try:
         user.save()
@@ -38,9 +38,9 @@ def create_user(request):
 
 def user_login(request):
     if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        user = authenticate(username=username, password=password)
+        username = request.POST.get('username')                    \
+        password = request.POST.get('password')                    \
+        user = authenticate(username=username, password=password)  \
         if user:
             if user.is_active:
                 login(request, user)
@@ -77,15 +77,15 @@ def lookup_user(request, user_id):
     except models.User.DoesNotExist:
         return _error_response(request, "User not found")
 
-    return _success_response(request, {'username': u.username,      
-                                       'first_name': u.f_name,          
-                                       'last_name': u.l_name,          
-									   'type_of_user': u.user_type, 
-                                       'is_active': u.is_active,    
-                                       'type_of_instrument': u.type_of_instrument, 
-                                       'date_joined': u.date_joined 
-                                       'listings': u.listings
-                                       'reviews': u.reviews
+    return _success_response(request, {'username': u.username,      \
+                                       'first_name': u.f_name,      \   
+                                       'last_name': u.l_name,       \  
+                                       'type_of_user': u.user_type, \
+                                       'is_active': u.is_active,    \
+                                       'type_of_instrument': u.type_of_instrument,  \ 
+                                       'date_joined': u.date_joined,\ 
+                                       'listings': u.listings,      \
+                                       'reviews': u.reviews         \
                                        })
 
 def update_user(request, user_id):
@@ -104,9 +104,9 @@ def update_user(request, user_id):
     if 'last_name' in request.POST:
         u.last_name = request.POST['last_name']
         changed = True
-	if 'type_of_user' in request.POST:
-		u.type_of_user = request.POST['type_of_user']
-		changed = True
+    if 'type_of_user' in request.POST:
+	u.type_of_user = request.POST['type_of_user']
+	changed = True
     if 'password' in request.POST:
         u.password = hashers.make_password(request.POST['password'])
         changed = True
@@ -129,17 +129,17 @@ def update_user(request, user_id):
 def create_listing(request):
     if request.method != 'POST':
         return _error_response(request, "must make POST request")
-    if 'title' not in request.POST or
-       'description' not in request.POST or
-       'creator' not in request.POST or
-       'available' not in request.POST:
+    if 'title' not in request.POST or             \
+       'description' not in request.POST or       \
+       'creator' not in request.POST or           \
+       'available' not in request.POST:         
         return _error_response(request, "missing required fields")
 
-    l = models.Listing(title=request.POST['title'],
-                    description=request.POST['description'],
-                    creator=request.POST['creator'],
-                    available=request.POST['available'],
-                    date_listed=datetime.datetime.now()
+    l = models.Listing(title=request.POST['title'],            \
+                    description=request.POST['description'],   \
+                    creator=request.POST['creator'],           \
+                    available=request.POST['available'],       \
+                    date_listed=datetime.datetime.now()        \
                     )
 
     try:
@@ -158,11 +158,11 @@ def lookup_listing(request, listing_id):
     except models.Listing.DoesNotExist:
         return _error_response(request, "Listing not found")
 
-    return _success_response(request, {'title': l.title,      
-                                       'description': l.description,          
-                                       'creator': l.creator,          
-                                       'available': l.available,    
-                                       'date_listed': l.date_listed 
+    return _success_response(request, {'title': l.title,                \
+                                       'description': l.description,    \     
+                                       'creator': l.creator,            \
+                                       'available': l.available,        \
+                                       'date_listed': l.date_listed     \
                                        })
 
 def update_listing(request, listing_id):
@@ -220,16 +220,15 @@ def buy_listing(request, listing_id):
 def create_review(request):
     if request.method != 'POST':
         return _error_response(request, "must make POST request")
-    if 'title' not in request.POST or     
-       'body' not in request.POST or     
-       'review_rating' not in request.POST or   
+    if 'title' not in request.POST or           \
+       'body' not in request.POST or            \
+       'review_rating' not in request.POST or   \
        'reviewer' not in request.POST:
         return _error_response(request, "missing required fields")
 
-    r = models.Review(title=request.POST['title'],                         
-                    body=request.POST['body'],                             
-                    review_rating=request.POST['review_rating'],                             
-                    reviewer=request.POST['reviewer']
+    r = models.Review(title=request.POST['title'],                \         
+                    body=request.POST['body'],                    \         
+                    review_rating=request.POST['review_rating'],  \                           	    reviewer=request.POST['reviewer']             \
                     )
 
     try:
