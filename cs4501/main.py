@@ -7,7 +7,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 
-from stuff import models
+from cs4501 import models
 
 # APIs for accessing Users###############################################################################################
 
