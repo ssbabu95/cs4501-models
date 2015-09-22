@@ -78,12 +78,12 @@ def lookup_user(request, user_id):
         return _error_response(request, "User not found")
 
     return _success_response(request, {'username': u.username,      \
-                                       'first_name': u.first_name,  \   
-                                       'last_name': u.last_name,    \  
+                                       'first_name': u.first_name,  \
+                                       'last_name': u.last_name,    \
                                        'type_of_user': u.user_type, \
                                        'is_active': u.is_active,    \
-                       'type_of_instrument': u.type_of_instrument,  \ 
-                                       'date_joined': u.date_joined,\ 
+                       'type_of_instrument': u.type_of_instrument,  \
+                                       'date_joined': u.date_joined,\
                                        'listings': u.listings,      \
                                        'reviews': u.reviews         \
                                        })
@@ -159,7 +159,7 @@ def lookup_listing(request, listing_id):
         return _error_response(request, "Listing not found")
 
     return _success_response(request, {'title': l.title,                \
-                                       'description': l.description,    \     
+                                       'description': l.description,    \
                                        'creator': l.creator,            \
                                        'available': l.available,        \
                                        'date_listed': l.date_listed     \
@@ -226,9 +226,10 @@ def create_review(request):
        'reviewer' not in request.POST:
         return _error_response(request, "missing required fields")
 
-    r = models.Review(title=request.POST['title'],                \         
-                    body=request.POST['body'],                    \         
-                    review_rating=request.POST['review_rating'],  \                           	    reviewer=request.POST['reviewer']             \
+    r = models.Review(title=request.POST['title'],                \
+                    body=request.POST['body'],                    \
+                    review_rating=request.POST['review_rating'],  \
+                    reviewer=request.POST['reviewer']             \
                     )
 
     try:
