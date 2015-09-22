@@ -105,8 +105,8 @@ def update_user(request, user_id):
         u.last_name = request.POST['last_name']
         changed = True
     if 'type_of_user' in request.POST:
-	u.type_of_user = request.POST['type_of_user']
-	changed = True
+	    u.type_of_user = request.POST['type_of_user']
+	    changed = True
     if 'password' in request.POST:
         u.password = hashers.make_password(request.POST['password'])
         changed = True
