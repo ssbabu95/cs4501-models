@@ -36,28 +36,28 @@ def create_user(request):
         return _error_response(request, "DB error")
     return _success_response(request, {'user_id': user.pk})
 
-def user_login(request):
-    if request.method == 'POST':
-        username = request.POST.get('username')                    \
-        password = request.POST.get('password')                    \
-        user = authenticate(username=username, password=password)  \
-        if user:
-            if user.is_active:
-                login(request, user)
-                return HttpResponse("Login successful")
-            else:
-                return HttpResponse("Login failed")
-        else:
-            return HttpResponse("Wrong username or password")
-    else:
-        return _error_response(request, "Must make a POST request")
+#def user_login(request):
+#    if request.method == 'POST':
+#        username = request.POST.get('username')                    
+#        password = request.POST.get('password')                    
+#        user = authenticate(username=username, password=password)  
+#        if user:
+#            if user.is_active:
+#                login(request, user)
+#                return HttpResponse("Login successful")
+#            else:
+#                return HttpResponse("Login failed")
+#        else:
+#            return HttpResponse("Wrong username or password")
+#    else:
+#        return _error_response(request, "Must make a POST request")
 
 
 
-@login_required
-def user_logout(request):
-    logout(request)
-    return HttpResponse("Logged out")
+#@login_required
+#def user_logout(request):
+#    logout(request)
+#    return HttpResponse("Logged out")
 
 def _error_response(request, error_msg):
     return JsonResponse({'ok': False, 'error': error_msg})
@@ -78,11 +78,11 @@ def lookup_user(request, user_id):
         return _error_response(request, "User not found")
 
     return _success_response(request, {'username': u.username,      \
-                                       'first_name': u.f_name,      \   
-                                       'last_name': u.l_name,       \  
+                                       'first_name': u.first_name,  \   
+                                       'last_name': u.last_name,    \  
                                        'type_of_user': u.user_type, \
                                        'is_active': u.is_active,    \
-                                       'type_of_instrument': u.type_of_instrument,  \ 
+                       'type_of_instrument': u.type_of_instrument,  \ 
                                        'date_joined': u.date_joined,\ 
                                        'listings': u.listings,      \
                                        'reviews': u.reviews         \
