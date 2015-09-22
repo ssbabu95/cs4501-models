@@ -1,16 +1,14 @@
-import datetime
-
 from django.http import JsonReponse
 from django.contrib.auth import hashers
 from django import db
-from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.models import User
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators.csrf import csrf_exempt
+import datetime
 
 from cs4501 import models
 
 # APIs for accessing Users###############################################################################################
 
+@csrf_exempt
 def create_user(request):
     if request.method != 'POST':
         return _error_response(request, "Must make a POST request")
@@ -205,7 +203,7 @@ def buy_listing(request, listing_id):
     except models.Listing.DoesNotExist:
         return _error_response(request, "Listing not found")
 
-    if !t.available:
+    if not t.available:
         return _error_response(request, "Listing not available")
 
     t.available = False
