@@ -21,11 +21,11 @@ def create_user(request):
        'type_of_user' not in request.POST or:
        return _error_response(request, "Missing required fields")
 
-    user = models.User(username=request.POST['username'],
+    user = models.User(
+        username=request.POST['username'],
         first_name = request.POST['first_name'],
         last_name = request.POST['last_name'],
         password = hashers.makepassword(request.POST['password']),
-        username = request.POST['username'],
         type_of_user = request.POST['type_of_user'],
         date_joined = datetime.datetime.now(),
         is_active = True,
@@ -99,13 +99,13 @@ def update_user(request, user_id):
 
     changed = False
     if 'first_name' in request.POST:
-        u.f_name = request.POST['f_name']
+        u.first_name = request.POST['first_name']
         changed = True
     if 'last_name' in request.POST:
-        u.l_name = request.POST['l_name']
+        u.last_name = request.POST['last_name']
         changed = True
 	if 'type_of_user' in request.POST:
-		u.user_type = request.POST['user_type']
+		u.type_of_user = request.POST['type_of_user']
 		changed = True
     if 'password' in request.POST:
         u.password = hashers.make_password(request.POST['password'])
@@ -114,10 +114,7 @@ def update_user(request, user_id):
         u.is_active = request.POST['is_active']
         changed = True
     if 'type_of_instrument' in request.POST:
-        u.is_active = request.POST['type_of_instrument']
-        changed = True
-    if 'listings' in request.POST:
-        u.is_active = request.POST['listings']
+        u.type_of_instrument = request.POST['type_of_instrument']
         changed = True
 
     if not changed:
@@ -247,27 +244,27 @@ def update_review(request, review_id):
         return _error_response(request, "Must make POST request")
 
     try:
-        r = models.Review.objects.get(pk=user_id)
+        r = models.Review.objects.get(pk=review_id)
     except models.Review.DoesNotExist:
         return _error_response(request, "Listing not found")
 
     changed = False
     if 'title' in request.POST:
-        u.title = request.POST['title']
+        r.title = request.POST['title']
         changed = True
     if 'body' in request.POST:
-        u.body = request.POST['body']
+        r.body = request.POST['body']
         changed = True
     if 'reviewer' in request.POST:
-        u.reviewer = request.POST['reviewer']
+        r.reviewer = request.POST['reviewer']
         changed = True
     if 'review_rating' in request.POST:
-        u.review_rating = request.POST['review_rating']
+        r.review_rating = request.POST['review_rating']
         changed = True
 
     if not changed:
         return _error_response(request, "No fields updated")
 
-    u.save()
+    r.save()
 
     return _success_response(request)
