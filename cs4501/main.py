@@ -132,17 +132,17 @@ def update_user(request, user_id):
 def create_listing(request):
     if request.method != 'POST':
         return _error_response(request, "must make POST request")
-    if 'title' not in request.POST or     \
-       'description' not in request.POST or     \
-       'creator' not in request.POST or   \
+    if 'title' not in request.POST or
+       'description' not in request.POST or
+       'creator' not in request.POST or
        'available' not in request.POST:
         return _error_response(request, "missing required fields")
 
-    l = models.Listing(title=request.POST['title'],                         \
-                    description=request.POST['description'],                             \
-                    creator=request.POST['creator'],                             \
-                    available=request.POST['available'],  \
-                    date_listed=datetime.datetime.now()                        \
+    l = models.Listing(title=request.POST['title'],
+                    description=request.POST['description'],
+                    creator=request.POST['creator'],
+                    available=request.POST['available'],
+                    date_listed=datetime.datetime.now()
                     )
 
     try:
