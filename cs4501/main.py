@@ -1,14 +1,14 @@
-from django.http import JsonReponse
+from django.http import JsonResponse
 from django.contrib.auth import hashers
 from django import db
-from django.contrib.auth.decorators.csrf import csrf_exempt
+#from django.contrib.auth.decorators.csrf import csrf_exempt
 import datetime
+import json
 
 from cs4501 import models
 
 # APIs for accessing Users###############################################################################################
 
-@csrf_exempt
 def create_user(request):
     if request.method != 'POST':
         return _error_response(request, "Must make a POST request")
@@ -23,7 +23,7 @@ def create_user(request):
         username=request.POST['username'],                         \
         first_name = request.POST['first_name'],                   \
         last_name = request.POST['last_name'],                     \
-        password = hashers.makepassword(request.POST['password']), \
+        password = hashers.make_password(request.POST['password']), \
         type_of_user = request.POST['type_of_user'],               \
         date_joined = datetime.datetime.now(),                     \
         is_active = True,                                          \
