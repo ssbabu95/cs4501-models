@@ -14,5 +14,6 @@ urlpatterns = patterns('',
 
     url(r'^api/v1/review/create$', main.create_review),
     url(r'^api/v1/review/(\d+)/update$', main.update_review),
+    url(r'^api/v1/review/(\d+)$', main.lookup_review),
     url(r'^admin/', include(admin.site.urls)),
 )

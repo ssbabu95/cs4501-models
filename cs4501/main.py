@@ -103,8 +103,8 @@ def update_user(request, user_id):
         u.last_name = request.POST['last_name']
         changed = True
     if 'type_of_user' in request.POST:
-	    u.type_of_user = request.POST['type_of_user']
-	    changed = True
+        u.type_of_user = request.POST['type_of_user']
+        changed = True
     if 'password' in request.POST:
         u.password = hashers.make_password(request.POST['password'])
         changed = True
@@ -180,7 +180,7 @@ def update_listing(request, listing_id):
         u.description = request.POST['description']
         changed = True
     if 'creator' in request.POST:
-        u.creator = request.POST['creator']
+        u.creator = models.User.objects.get(pk=request.POST['creator'])
         changed = True
     if 'available' in request.POST:
         u.available = request.POST['available']
@@ -195,8 +195,8 @@ def update_listing(request, listing_id):
 
 
 def buy_listing(request, listing_id):
-    if request.method != 'POST':
-        return _error_response(request, "must make POST request")
+    if request.method != 'GET':
+        return _error_response(request, "must make GET request")
 
     try:
         t = models.Listing.objects.get(pk=listing_id)
@@ -227,7 +227,7 @@ def create_review(request):
     r = models.Review(title=request.POST['title'],                \
                     body=request.POST['body'],                    \
                     review_rating=request.POST['review_rating'],  \
-                    reviewer=request.POST['reviewer']             \
+                    reviewer=models.User.objects.get(pk=request.POST['reviewer'])             \
                     )
 
     try:
@@ -236,6 +236,22 @@ def create_review(request):
         return _error_response(request, "db error")
 
     return _success_response(request, {'review_id': r.pk})
+
+def lookup_review(request, review_id):
+	if request.method != 'GET':
+		return _error_response(request, "Must make GET request")
+	
+	try:
+		l = models.Review.objects.get(pk=review_id)
+	except models.Review.DoesNotExist:
+		return _error_response(request, "Review not found")
+
+	return _success_response(request, {'title': l.title,                \
+                                       'body': l.body,    \
+                                       'reviewer': l.reviewer.username,            \
+                                       'review_rating': l.review_rating        \
+                                       })
+
 
 def update_review(request, review_id):
     if request.method != 'POST':
@@ -254,7 +270,7 @@ def update_review(request, review_id):
         r.body = request.POST['body']
         changed = True
     if 'reviewer' in request.POST:
-        r.reviewer = request.POST['reviewer']
+        r.reviewer = models.User.objects.get(pk=request.POST['reviewer'])
         changed = True
     if 'review_rating' in request.POST:
         r.review_rating = request.POST['review_rating']
