@@ -15,7 +15,7 @@ class User(models.Model):
 	date_joined = models.DateTimeField()
 	first_name = models.CharField(max_length=16)
 	last_name = models.CharField(max_length=16)
-	password = models.CharField(max_length=16)
+	password = models.CharField(max_length=96)
 	is_active = models.BooleanField()
 	type_of_user = models.CharField(max_length=16, choices=Type_Of_user_List, default=General)
 	type_of_instrument = models.CharField(max_length=16, null=True, blank=True)

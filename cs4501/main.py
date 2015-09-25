@@ -29,7 +29,7 @@ def create_user(request):
         is_active = True,                                          \
     )
     try:
-        user.save()
+    	user.save()
     except db.Error:
         return _error_response(request, "DB error")
     return _success_response(request, {'user_id': user.pk})
@@ -78,12 +78,12 @@ def lookup_user(request, user_id):
     return _success_response(request, {'username': u.username,      \
                                        'first_name': u.first_name,  \
                                        'last_name': u.last_name,    \
-                                       'type_of_user': u.user_type, \
+                                       'type_of_user': u.type_of_user, \
                                        'is_active': u.is_active,    \
                        'type_of_instrument': u.type_of_instrument,  \
-                                       'date_joined': u.date_joined,\
-                                       'listings': u.listings,      \
-                                       'reviews': u.reviews         \
+                                       'date_joined': u.date_joined \
+                                      # 'listings': u.listings,      \
+                                      # 'reviews': u.reviews         \
                                        })
 
 def update_user(request, user_id):
@@ -135,7 +135,7 @@ def create_listing(request):
 
     l = models.Listing(title=request.POST['title'],            \
                     description=request.POST['description'],   \
-                    creator=request.POST['creator'],           \
+                    creator=models.User.objects.get(pk=request.POST['creator']),           \
                     available=request.POST['available'],       \
                     date_listed=datetime.datetime.now()        \
                     )
@@ -158,7 +158,7 @@ def lookup_listing(request, listing_id):
 
     return _success_response(request, {'title': l.title,                \
                                        'description': l.description,    \
-                                       'creator': l.creator,            \
+                                       'creator': l.creator.username,            \
                                        'available': l.available,        \
                                        'date_listed': l.date_listed     \
                                        })
