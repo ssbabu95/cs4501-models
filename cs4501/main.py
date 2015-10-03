@@ -282,3 +282,20 @@ def update_review(request, review_id):
     r.save()
 
     return _success_response(request)
+
+def most_recent(request):
+	if request.method != 'GET':
+		return _error_response(request, "Must make a GET request")
+	try:
+		l = models.Listing.objects.latest('date_listed')
+	except models.Listing.DoesNotExist:
+		return _error_response(request, "Listing not found")
+
+	return _success_response(request, {'title': l.title,                \
+                                       'description': l.description,    \
+                                       'creator': l.creator.username,            \
+                                       'available': l.available,        \
+                                       'date_listed': l.date_listed     \
+                                       })
+
+
