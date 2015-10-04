@@ -160,7 +160,8 @@ def lookup_listing(request, listing_id):
                                        'description': l.description,    \
                                        'creator': l.creator.username,            \
                                        'available': l.available,        \
-                                       'date_listed': l.date_listed     \
+                                       'date_listed': l.date_listed,     \
+				       'listing_id': l.pk		\
                                        })
 
 def update_listing(request, listing_id):
@@ -295,7 +296,8 @@ def most_recent(request):
                                        'description': l.description,    \
                                        'creator': l.creator.username,            \
                                        'available': l.available,        \
-                                       'date_listed': l.date_listed     \
+                                       'date_listed': l.date_listed,     \
+				       'listing_id': l.pk,		\
                                        })
 
 
