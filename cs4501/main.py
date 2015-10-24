@@ -1,4 +1,4 @@
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.contrib.auth import hashers
 from django import db
 #from django.contrib.auth.decorators.csrf import csrf_exempt
@@ -26,7 +26,7 @@ def create_user(request):
         password = hashers.make_password(request.POST['password']), \
         type_of_user = request.POST['type_of_user'],               \
         date_joined = datetime.datetime.now(),                     \
-        is_active = True,                                          \
+        is_active = False,                                          \
     )
     try:
     	user.save()
@@ -34,24 +34,32 @@ def create_user(request):
         return _error_response(request, "DB error")
     return _success_response(request, {'user_id': user.pk})
 
-#def user_login(request):
-#    if request.method == 'POST':
-#        username = request.POST.get('username')                    
-#        password = request.POST.get('password')                    
-#        user = authenticate(username=username, password=password)  
-#        if user:
-#            if user.is_active:
-#                login(request, user)
-#                return HttpResponse("Login successful")
-#            else:
-#                return HttpResponse("Login failed")
-#        else:
-#            return HttpResponse("Wrong username or password")
-#    else:
-#        return _error_response(request, "Must make a POST request")
+def user_login(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')                    
+        password = request.POST.get('password')                    
+        user = authenticate(user=username, pas=password)  
+        if user:
+            if user.is_active:
+                #login(request, user)
+                return HttpResponse("Login successful")
+            else:
+                return HttpResponse("Login failed")
+        else:
+            return HttpResponse("Wrong username or password")
+    else:
+        return _error_response(request, "Must make a POST request")
 
-
-
+def authenticate(user=None, pas=None):
+	try:
+		usr = models.User.objects.get(username=user)
+		if hashers.check_password(pas, usr.password):
+			return usr
+		else:
+			return None 
+	except models.User.DoesNotExist:
+		return HttpResponse("Your username does not exist")
+		
 #@login_required
 #def user_logout(request):
 #    logout(request)

@@ -6,6 +6,7 @@ urlpatterns = patterns('',
     url(r'^api/v1/users/create$', main.create_user),
     url(r'^api/v1/users/(\d+)$', main.lookup_user),
     url(r'^api/v1/users/(\d+)/update$', main.update_user),
+    url(r'^api/v1/users/auth$', main.user_login),
 
     url(r'^api/v1/listing/create$', main.create_listing),
     url(r'^api/v1/listing/(\d+)$', main.lookup_listing),
