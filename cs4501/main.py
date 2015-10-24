@@ -2,8 +2,7 @@ from django.http import JsonResponse, HttpResponse
 from django.contrib.auth import hashers
 from django import db
 #from django.contrib.auth.decorators.csrf import csrf_exempt
-import datetime
-import json
+import datetime, json, os, base64
 
 from cs4501 import models
 
@@ -40,11 +39,7 @@ def user_login(request):
         password = request.POST.get('password')                    
         user = authenticate(user=username, pas=password)  
         if user:
-            if user.is_active:
-                #login(request, user)
-                return HttpResponse("Login successful")
-            else:
-                return HttpResponse("Login failed")
+            return user
         else:
             return HttpResponse("Wrong username or password")
     else:
@@ -54,7 +49,8 @@ def authenticate(user=None, pas=None):
 	try:
 		usr = models.User.objects.get(username=user)
 		if hashers.check_password(pas, usr.password):
-			return usr
+			a = models.Authenticator(date_created=datetime.datetime.now, user_id = usr.id, authenticator=base64.b64encode(os.urandom(32)).decode('utf-8'))
+			return a
 		else:
 			return None 
 	except models.User.DoesNotExist:

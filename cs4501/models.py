@@ -20,6 +20,12 @@ class User(models.Model):
 	type_of_user = models.CharField(max_length=16, choices=Type_Of_user_List, default=General)
 	type_of_instrument = models.CharField(max_length=16, null=True, blank=True)
 
+class Authenticator(models.Model):
+	user_id = models.IntegerField()
+	authenticator = models.CharField(max_length=128, primary_key=True)
+	date_created = models.DateTimeField()
+
+
 class Listing(models.Model):
 	title = models.CharField(max_length=16)
 	description = models.TextField(blank=True)
