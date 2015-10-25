@@ -38,10 +38,10 @@ def user_login(request):
         username = request.POST.get('username')                    
         password = request.POST.get('password')                    
         user = authenticate(user=username, pas=password)  
-        if user:
-            return user
+        if user is not None:
+            return JsonResponse({'authenticator': user.authenticator, 'user_id': user.user_id, 'date_created': user.date_created})
         else:
-            return HttpResponse("Wrong username or password")
+            return _error_response(request, "Wrong username or password")
     else:
         return _error_response(request, "Must make a POST request")
 
@@ -49,12 +49,13 @@ def authenticate(user=None, pas=None):
 	try:
 		usr = models.User.objects.get(username=user)
 		if hashers.check_password(pas, usr.password):
-			a = models.Authenticator(date_created=datetime.datetime.now, user_id = usr.id, authenticator=base64.b64encode(os.urandom(32)).decode('utf-8'))
+			a = models.Authenticator(date_created=datetime.datetime.now(), user_id = usr.id, authenticator=base64.b64encode(os.urandom(32)).decode('utf-8'))
+			a.save()
 			return a
 		else:
 			return None 
 	except models.User.DoesNotExist:
-		return HttpResponse("Your username does not exist")
+		return None
 		
 #@login_required
 #def user_logout(request):
@@ -129,27 +130,32 @@ def update_user(request, user_id):
 #APIs for accessing Listing################################################################################################################
 
 def create_listing(request):
-    if request.method != 'POST':
-        return _error_response(request, "must make POST request")
-    if 'title' not in request.POST or             \
-       'description' not in request.POST or       \
-       'creator' not in request.POST or           \
-       'available' not in request.POST:         
-        return _error_response(request, "missing required fields")
+	if request.method != 'POST':
+		return _error_response(request, "must make POST request")
+	try:
+		place = models.Authenticator.objects.get(user_id=request.POST['u_id'])
+	except models.Authenticator.DoesNotExist:
+		return _error_response(request, "You are not logged in")
+	if place:
+		if 'title' not in request.POST or             \
+	       'description' not in request.POST or       \
+	       'creator' not in request.POST or           \
+	       'available' not in request.POST:         
+			return _error_response(request, "missing required fields")
 
-    l = models.Listing(title=request.POST['title'],            \
-                    description=request.POST['description'],   \
-                    creator=models.User.objects.get(pk=request.POST['creator']),           \
-                    available=request.POST['available'],       \
-                    date_listed=datetime.datetime.now()        \
-                    )
+		l = models.Listing(title=request.POST['title'],            \
+			    description=request.POST['description'],   \
+			    creator=models.User.objects.get(pk=request.POST['creator']),           \
+			    available=request.POST['available'],       \
+			    date_listed=datetime.datetime.now()        \
+			    )
 
-    try:
-        l.save()
-    except db.Error:
-        return _error_response(request, "db error")
+		try:
+			l.save()
+		except db.Error:
+			return _error_response(request, "db error")
 
-    return _success_response(request, {'listing_id': l.pk})
+		return _success_response(request, {'listing_id': l.pk})
 
 def lookup_listing(request, listing_id):
     if request.method != 'GET':
