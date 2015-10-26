@@ -57,10 +57,13 @@ def authenticate(user=None, pas=None):
 	except models.User.DoesNotExist:
 		return None
 		
-#@login_required
-#def user_logout(request):
-#    logout(request)
-#    return HttpResponse("Logged out")
+def user_logout(request):
+	if request.method == 'POST':
+		uid = request.POST.get('u_id')
+		models.Authenticator.objects.filter(user_id=uid).delete()
+		return _success_response(request, "Successfully logged out")
+	else:
+		return _error_response(request, "Must make a POST request")
 
 def _error_response(request, error_msg):
     return JsonResponse({'ok': False, 'error': error_msg})
