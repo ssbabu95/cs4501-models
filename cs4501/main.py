@@ -25,7 +25,7 @@ def create_user(request):
         password = hashers.make_password(request.POST['password']), \
         type_of_user = request.POST['type_of_user'],               \
         date_joined = datetime.datetime.now(),                     \
-        is_active = False,                                          \
+        is_active = True,                                          \
     )
     try:
     	user.save()
@@ -139,26 +139,26 @@ def create_listing(request):
 		place = models.Authenticator.objects.get(user_id=request.POST['u_id'])
 	except models.Authenticator.DoesNotExist:
 		return _error_response(request, "You are not logged in")
-	if place:
-		if 'title' not in request.POST or             \
-	       'description' not in request.POST or       \
-	       'creator' not in request.POST or           \
-	       'available' not in request.POST:         
-			return _error_response(request, "missing required fields")
 
-		l = models.Listing(title=request.POST['title'],            \
-			    description=request.POST['description'],   \
-			    creator=models.User.objects.get(pk=request.POST['creator']),           \
-			    available=request.POST['available'],       \
-			    date_listed=datetime.datetime.now()        \
-			    )
+	if 'title' not in request.POST or             \
+       'description' not in request.POST or       \
+       'creator' not in request.POST or           \
+       'available' not in request.POST:         
+		return _error_response(request, "missing required fields")
 
-		try:
-			l.save()
-		except db.Error:
-			return _error_response(request, "db error")
+	l = models.Listing(title=request.POST['title'],            \
+		    description=request.POST['description'],   \
+		    creator=models.User.objects.get(pk=request.POST['creator']),           \
+		    available=request.POST['available'],       \
+		    date_listed=datetime.datetime.now()        \
+		    )
 
-		return _success_response(request, {'listing_id': l.pk})
+	try:
+		l.save()
+	except db.Error:
+		return _error_response(request, "db error")
+
+	return _success_response(request, {'listing_id': l.pk})
 
 def lookup_listing(request, listing_id):
     if request.method != 'GET':
