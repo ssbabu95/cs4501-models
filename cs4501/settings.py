@@ -60,7 +60,7 @@ DATABASES = {
         'ENGINE': 'mysql.connector.django',
         'NAME': 'cs4501',
 	'USER': 'www',
-	'PASSWORD': 'sum33t',
+	'PASSWORD': 'S3cure',
 	'HOST': 'db',
     }
 }
